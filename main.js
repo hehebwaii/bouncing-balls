@@ -56,7 +56,7 @@ class Ball extends Shape {
 
 class EvilCircle extends Shape {
   constructor(x, y) {
-    super(x, y, 20, 20); // Set velocity for movement
+    super(x, y, 0, 0); // Set velocity to 0 for mouse-controlled movement
     this.size = 10;
     this.color = "white";
   }
@@ -154,20 +154,9 @@ function loop() {
 
 loop(); // Start the game loop
 
-// Add keyboard controls for the evil circle
-window.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "a":
-      evilCircle.x -= evilCircle.velX;
-      break;
-    case "d":
-      evilCircle.x += evilCircle.velX;
-      break;
-    case "w":
-      evilCircle.y -= evilCircle.velY;
-      break;
-    case "s":
-      evilCircle.y += evilCircle.velY;
-      break;
-  }
+// Update the evil circle's position based on mouse movement
+canvas.addEventListener("mousemove", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  evilCircle.x = e.clientX - rect.left;
+  evilCircle.y = e.clientY - rect.top;
 });
