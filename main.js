@@ -110,6 +110,7 @@ class EvilCircle extends Shape {
           ball.exists = false; // Ball is eaten
           score--; // Decrease score
           updateScore(); // Update score on screen
+          createNewBall(); // Generate new ball to replace the eaten one
         }
       }
     }
@@ -127,9 +128,8 @@ function updateScore() {
   document.getElementById("score").textContent = `Ball count: ${score}`;
 }
 
-// Create an array of balls
-let balls = [];
-for (let i = 0; i < 5; i++) {
+// Create a new ball with random properties
+function createNewBall() {
   const size = Math.random() * 20 + 10; // Random size
   const color = randomRGB(); // Random color
   const velX = Math.random() * 4 + 1; // Random horizontal velocity
@@ -137,6 +137,13 @@ for (let i = 0; i < 5; i++) {
   const ball = new Ball(Math.random() * canvas.width, Math.random() * canvas.height, velX, velY, size, color);
   balls.push(ball);
   score++; // Increment score
+  updateScore(); // Update score on screen
+}
+
+// Create an array of balls
+let balls = [];
+for (let i = 0; i < 5; i++) {
+  createNewBall(); // Create new balls initially
 }
 
 let evilCircle = new EvilCircle(100, 100); // Evil circle starting position
