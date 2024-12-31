@@ -1,3 +1,12 @@
+// Initialize the canvas and context
+const canvas = document.getElementById("gameCanvas");
+const context = canvas.getContext("2d");
+
+// Set canvas size
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Define the Shape class
 class Shape {
   constructor(x, y, velX, velY) {
     this.x = x;
@@ -7,27 +16,13 @@ class Shape {
   }
 }
 
+// Define the Ball class
 class Ball extends Shape {
   constructor(x, y, velX, velY, size, color) {
     super(x, y, velX, velY);
     this.size = size;
     this.color = color;
-    this.exists = true; // Tracks whether the ball is still in the game
-  }
-
-  // Collision detection between balls
-  collisionDetect() {
-    for (const ball of balls) {
-      if (!(this === ball) && ball.exists) {
-        const dx = this.x - ball.x;
-        const dy = this.y - ball.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < this.size + ball.size) {
-          ball.color = this.color = randomRGB(); // Change color on collision
-        }
-      }
-    }
+    this.exists = true; // Tracks if the ball is still in the game
   }
 
   // Draw the ball
@@ -44,7 +39,7 @@ class Ball extends Shape {
     this.x += this.velX;
     this.y += this.velY;
 
-    // If the ball hits the boundaries, reverse its direction
+    // Bounce the ball off the edges
     if (this.x + this.size > canvas.width || this.x - this.size < 0) {
       this.velX = -this.velX;
     }
@@ -52,11 +47,27 @@ class Ball extends Shape {
       this.velY = -this.velY;
     }
   }
+
+  // Detect collision with other balls
+  collisionDetect() {
+    for (const ball of balls) {
+      if (this !== ball && ball.exists) {
+        const dx = this.x - ball.x;
+        const dy = this.y - ball.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < this.size + ball.size) {
+          ball.color = this.color = randomRGB(); // Change color on collision
+        }
+      }
+    }
+  }
 }
 
+// Define the EvilCircle class
 class EvilCircle extends Shape {
   constructor(x, y) {
-    super(x, y, 0, 0); // Set velocity to 0 for mouse-controlled movement
+    super(x, y, 0, 0); // No velocity since we control it with the mouse
     this.size = 10;
     this.color = "white";
   }
@@ -71,7 +82,7 @@ class EvilCircle extends Shape {
     context.closePath();
   }
 
-  // Ensure the evil circle doesn't go off screen
+  // Ensure the evil circle doesn't go off the screen
   checkBounds() {
     if (this.x + this.size > canvas.width) {
       this.x = canvas.width - this.size;
@@ -87,7 +98,7 @@ class EvilCircle extends Shape {
     }
   }
 
-  // Collision detection between the evil circle and balls
+  // Detect collision with the evil circle
   collisionDetect() {
     for (const ball of balls) {
       if (ball.exists) {
@@ -96,7 +107,7 @@ class EvilCircle extends Shape {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < this.size + ball.size) {
-          ball.exists = false; // Ball is eaten by the evil circle
+          ball.exists = false; // Ball is eaten
           score--; // Decrease score
           updateScore(); // Update score on screen
         }
@@ -105,38 +116,36 @@ class EvilCircle extends Shape {
   }
 }
 
-// Generate a random RGB color for balls
+// Random color generator for the balls
 function randomRGB() {
   return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
 }
 
-// Initialize canvas and context
-let canvas = document.getElementById("gameCanvas");
-let context = canvas.getContext("2d");
-
-let balls = [];
-let evilCircle = new EvilCircle(100, 100); // Example starting position
-let score = 0; // Track the score
-
-// Update the score display
+// Score tracking
+let score = 0;
 function updateScore() {
   document.getElementById("score").textContent = `Ball count: ${score}`;
 }
 
-// Create balls (for example, 5 balls) with random velocities
+// Create an array of balls
+let balls = [];
 for (let i = 0; i < 5; i++) {
-  let size = Math.random() * 20 + 10; // Random size
-  let color = randomRGB(); // Random color
-  let velX = Math.random() * 4 + 1; // Random horizontal velocity
-  let velY = Math.random() * 4 + 1; // Random vertical velocity
-  let ball = new Ball(Math.random() * canvas.width, Math.random() * canvas.height, velX, velY, size, color);
+  const size = Math.random() * 20 + 10; // Random size
+  const color = randomRGB(); // Random color
+  const velX = Math.random() * 4 + 1; // Random horizontal velocity
+  const velY = Math.random() * 4 + 1; // Random vertical velocity
+  const ball = new Ball(Math.random() * canvas.width, Math.random() * canvas.height, velX, velY, size, color);
   balls.push(ball);
-  score++; // Increment score for each new ball
+  score++; // Increment score
 }
 
+let evilCircle = new EvilCircle(100, 100); // Evil circle starting position
+
+// Main game loop
 function loop() {
   context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
+  // Draw and update all balls
   for (const ball of balls) {
     if (ball.exists) {
       ball.draw();
@@ -145,6 +154,7 @@ function loop() {
     }
   }
 
+  // Draw and check bounds of the evil circle
   evilCircle.draw();
   evilCircle.checkBounds();
   evilCircle.collisionDetect();
@@ -154,7 +164,7 @@ function loop() {
 
 loop(); // Start the game loop
 
-// Update the evil circle's position based on mouse movement
+// Track the mouse movement to control the evil circle
 canvas.addEventListener("mousemove", (e) => {
   const rect = canvas.getBoundingClientRect();
   evilCircle.x = e.clientX - rect.left;
