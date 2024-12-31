@@ -145,6 +145,7 @@ loop(); // Start the game loop
 
 // Add keyboard controls for the evil circle
 window.addEventListener("keydown", (e) => {
+  console.log(`Key pressed: ${e.key}`); // Debugging line
   switch (e.key) {
     case "a":
       evilCircle.x -= evilCircle.velX;
@@ -160,4 +161,3 @@ window.addEventListener("keydown", (e) => {
       break;
   }
 });
-
