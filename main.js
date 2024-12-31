@@ -43,6 +43,14 @@ class Ball extends Shape {
   update() {
     this.x += this.velX;
     this.y += this.velY;
+
+    // If the ball hits the boundaries, reverse its direction
+    if (this.x + this.size > canvas.width || this.x - this.size < 0) {
+      this.velX = -this.velX;
+    }
+    if (this.y + this.size > canvas.height || this.y - this.size < 0) {
+      this.velY = -this.velY;
+    }
   }
 }
 
@@ -115,12 +123,15 @@ function updateScore() {
   document.getElementById("score").textContent = `Ball count: ${score}`;
 }
 
-// Create balls (for example, 5 balls)
+// Create balls (for example, 5 balls) with random velocities
 for (let i = 0; i < 5; i++) {
   let size = Math.random() * 20 + 10; // Random size
   let color = randomRGB(); // Random color
-  let ball = new Ball(Math.random() * canvas.width, Math.random() * canvas.height, 5, 5, size, color);
+  let velX = Math.random() * 4 + 1; // Random horizontal velocity
+  let velY = Math.random() * 4 + 1; // Random vertical velocity
+  let ball = new Ball(Math.random() * canvas.width, Math.random() * canvas.height, velX, velY, size, color);
   balls.push(ball);
+  score++; // Increment score for each new ball
 }
 
 function loop() {
@@ -145,7 +156,6 @@ loop(); // Start the game loop
 
 // Add keyboard controls for the evil circle
 window.addEventListener("keydown", (e) => {
-  console.log(`Key pressed: ${e.key}`); // Debugging line
   switch (e.key) {
     case "a":
       evilCircle.x -= evilCircle.velX;
