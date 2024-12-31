@@ -3,14 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bouncing Balls with Evil Circle</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Bouncing Balls Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      background-color: #222;
+    }
+
+    p {
+      position: absolute;
+      margin: 0;
+      top: 35px;
+      right: 5px;
+      color: #aaa;
+      font-size: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Bouncing Balls with Evil Circle</h1>
+  <h1>Bouncing Balls Game</h1>
   <p id="score">Ball count: 0</p>
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <canvas id="gameCanvas"></canvas>
   <script src="main.js"></script>
 </body>
 </html>
-
